@@ -1,0 +1,12 @@
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+const c=new Client({name:'t',version:'1'}); await c.connect(new StdioClientTransport({command:'node',args:['server.js']}));
+const tools=await c.listTools(); console.log(tools.tools.map(t=>t.name));
+const call=async(n,a)=>{ const r=await c.callTool({name:n,arguments:a}); return JSON.parse(r.content[0].text); };
+console.log((await call('find_ui_pattern',{description:'the gray boxes that show while stuff loads'})).best.term);
+console.log((await call('check_pattern_combination',{patterns:['toast','inline validation']})).verdict);
+const p=await call('build_ui_prompt',{what:'flight search results',kind:'screen',platforms:['web'],decisions:{nav:'tabs'}}); console.log(p.patternsNamed, p.undecided.length);
+console.log((await call('check_prompt_for_vague_words',{text:'make it pop and modern'})).vagueWords.length);
+console.log(Object.keys(await call('get_prep_options',{})));
+console.log((await call('list_ui_patterns',{category:'Overlays'})).patterns.length);
+await c.close();
